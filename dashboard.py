@@ -919,19 +919,19 @@ with tab3:
         unsafe_allow_html=True)
 
     if selected_countries:
-        d0 = df_long[(df_long['area'] == selected_countries) & (df_long['year'] == selected_year)]
+        d0 = df_long[(df_long['area'] == selected_countries) & (df_long['year'] == year_s)]
         for _, r in d3.iterrows():
             vals = [r[a] for a in axes]
             vals = vals + vals[:1]
             fig_donut = px.pie(
                 d0, names='secteur', values='contribution_pct', hole=0.55,color='secteur',
                 color_discrete_map=color_map2,
-                title=f'Contributions au stress SDG — {selected_countries} ({selected_year})'
+                title=f'Contributions au stress SDG — {selected_countries} ({year_s})'
             )
         fig_donut.update_traces(textposition='inside', textinfo='percent+label')
         st.plotly_chart(fig_donut, use_container_width=True)
 
-    year = selected_year
+    year = year_s
     d1 = df_long[df_long['year'] == year].copy()
     order_area = (df[df['year'] == year]
                   .sort_values('sdg642_water_stress_pct', ascending=False)['area'].tolist())
@@ -949,14 +949,14 @@ with tab3:
     fig_stack_countries.update_layout(barmode='stack')
     st.plotly_chart(fig_stack_countries, use_container_width=True)
 
-    d6 = df_long[df_long['area'] == selected_country].copy()
+    d6 = df_long[df_long['area'] == selected_countries].copy()
     fig_combo = px.bar(
         d6, x='year', y='contribution_pct', color='secteur',
         category_orders={'secteur': list(sect_map.values())},
         color_discrete_map=color_map2,
-        title=f'Contributions et stress total — {selected_country}'
+        title=f'Contributions et stress total — {selected_countries}'
     )
-    d_stress = (df[df['area'] == selected_country][['year', 'sdg642_water_stress_pct']]
+    d_stress = (df[df['area'] == selected_countries][['year', 'sdg642_water_stress_pct']]
                 .sort_values('year'))
     fig_combo.add_trace(go.Scatter(
         x=d_stress['year'], y=d_stress['sdg642_water_stress_pct'],
